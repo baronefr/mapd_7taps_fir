@@ -1,0 +1,83 @@
+%%  +++++++++   LaTeX template for reports   +++++++++
+%%
+%%  Edited by Francesco Barone for UniPD reports in gen 2022
+%%  Original template from Mälardalen University
+%%    >>  https://www.overleaf.com/latex/templates/ieee-bare-demo-template-for-conferences/ypypvwjmvtdf
+%%        Note: The base template should follow the IEEE conference guidelines.
+%%
+%%  for a general reference, see  
+%%     https://ras.papercept.net/conferences/support/files/IEEEtran_HOWTO.pdf
+%%     https://www.coep.org.in/page_assets/491/IEEE_Template_4.pdf
+
+
+\documentclass[10pt, conference, a4paper]{IEEEtran}
+
+% take all the style settings from separate file
+\input{mystyle}
+
+%  ----------------------------- TWEAKS -----------------------------
+
+\lstdefinelanguage{VHDL}{
+  morekeywords={
+    library,use,all,entity,is,port,in,out,end,architecture,of,
+    begin,and
+  },
+  morecomment=[l]--,
+  basicstyle=\ttfamily\footnotesize
+}
+
+%  ----------------------------- DOCUMENT -----------------------------
+
+%% ACRONYMS: \acrodef{acronym}[short name]{full name}
+%\acrodef{svm}[SVM]{Support Vector Machine}
+
+% title
+\title{ A 7-taps re-programmable Finite Impulse Response filter on FPGA }
+\pretitle{final report for \textit{Management and Analysis of Physics Dataset module A} \\ AY 2021/22 - master degree in Physics of Data \\ Padua, 04 feb 2022 \\}
+
+%% AUTHORS
+\author{
+    \IEEEauthorblockN{
+        Barone Francesco Pio\IEEEauthorrefmark{1},
+        Amjadi Bahador\IEEEauthorrefmark{2},
+        Alba Roberto\IEEEauthorrefmark{3},
+        Toledo Norberto\IEEEauthorrefmark{4},
+        Khosravi Elham\IEEEauthorrefmark{7}
+    }
+    \IEEEauthorblockA{
+        Dipartimento di Fisica e Astronomia "Galileo Galilei"\\ University of Padua\\
+        \fontsize{9}{10}\selectfont Email:
+        \IEEEauthorrefmark{1}baronefr@outlook.com, 
+        \IEEEauthorrefmark{2}bahador.amjadi@gmail.com,
+        \IEEEauthorrefmark{3}robertoalgar555@gmail.com,\\
+        \IEEEauthorrefmark{4}toledonorberto946@gmail.com,
+        \IEEEauthorrefmark{7}elamkhosravi@gmail.com
+}}
+
+
+\begin{document}
+
+% title and abstract in single column
+\twocolumn[
+    \begin{@twocolumnfalse}
+        \maketitle
+        \thispagestyle{title} % enable custom header for first page
+        \input{sections/abstract}
+    \end{@twocolumnfalse}
+    \input{sections/keywords}
+    \bigskip]
+
+\pagestyle{plain} % enable page number starting from page 2
+
+% sections
+\input{sections/introduction}
+\input{sections/body}
+
+% coda
+\vspace{\fill}
+\par\par\noindent\rule{\columnwidth}{0.4pt}
+\input{sections/extras}
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,refs}
+
+\end{document}
