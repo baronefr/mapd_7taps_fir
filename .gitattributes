@@ -1,2 +1,5 @@
+# ignore Jupyter notebooks
 *.ipynb linguist-vendored
+# ignore latex files
 *.tex linguist-vendored
+*.bib linguist-vendored
