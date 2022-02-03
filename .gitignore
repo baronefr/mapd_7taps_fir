@@ -1,2 +1,4 @@
 # ignore custom style file
 tex/mystyle.tex
+# ignore jupyter checkpoints
+**/.ipynb_checkpoints

@@ -19,7 +19,7 @@ FIR filters are simple, yet effective filters which can be implemented on an FPG
 ```
 ├── bin         | Vivado implementation of the FIR filter
 ├── bin_nosw    | Vivado implementation without switching capabilities, just for backup
-├── bit         | bitstreams
+├── bit         | bitstreams immplemented in Vivado
 ├── demo        | demo data: waveforms, simulations, ...
 ├── img         | for images
 ├── tex         | the report LaTeX source
@@ -32,6 +32,7 @@ FIR filters are simple, yet effective filters which can be implemented on an FPG
                                       to software filters and simulations.
  + 7_fir_demo_switch.ipynb             A demo which uses the FPGA as both a lowpass & 
                                       highpass, by reprogramming runtime the coefficients.
+ + 7_fir_guitar_experiment.ipynb       A demo which simulates a guitar pickup using FIR filters.
  
  + report.pdf                          The report of this project.
 

@@ -8,7 +8,7 @@ An FIR filter takes as input a signal $X[n]$ and outputs a refined one $Y[n]$. S
 where N is the filter order. In this report we focus on a 7-taps filter (remember that $N = \textrm{order} = \textrm{taps} - 1$), so we can explicit the convolution as
 \begin{equation}
 \begin{split}  % this allows to split the math in more lines
-    Y[n] = \sum_{i=0}^{7}h_i \cdot X[n-i] = & \; h_0 \cdot X[n] + h_1 \cdot X[n-1] +\\
+    Y[n] = \sum_{i=0}^{6}h_i \cdot X[n-i] = & \; h_0 \cdot X[n] + h_1 \cdot X[n-1] +\\
            & + ... + h_6 \cdot X[n-6] 
 \end{split}
 \label{eq:7fir}
@@ -78,8 +78,7 @@ $h_6 = 0.00329661$   \\ \hline
 \label{ssec:symmetric_coefficients}
 
 Playing around with the coefficient computation, we noticed that the coefficients for high and low-pass filters are symmetric, i.e. the first coefficient is equivalent to the last one, the second to the second-last one and so on, in pairs. 
-
-To do some fine optimization on the implementation, we worked on the condition that $h(k)$ is a symmetric vector. Explicitly, for 7-taps it means $h_0=h_6$ , $h_1=h_5$, $h_2=h_4$; $h_3$ remains unpaired. Therefore, the convolution of Eq. \ref{eq:7fir} can be rewritten as:
+We use the fact that h is symmetric to do some fine optimization on the design. Explicitly, for 7-taps it means $h_0=h_6$ , $h_1=h_5$, $h_2=h_4$; $h_3$ remains unpaired. Therefore, the convolution of Eq. \ref{eq:7fir} can be rewritten as:
 \begin{equation}
 \begin{split}
     Y[n] = \; & h_0 (X_0+X_6) + h_1(X_1+X_5) + \\ 
@@ -128,8 +127,8 @@ float      & rounded integers & hex   \\ \hline
 \end{table}
 
 Since the convolution of the signal is linear, scaling the coefficients implies that also the output value $Y[j]$ is being scaled:
-\[ Y^*[j] = 2^8 \cdot \sum_{i=0}^{7} h_i \cdot X[n-i] \]
-\[ Y[j] = \frac{1}{2^8} Y^*[j] = \sum_{i=0}^{7} h_i \cdot X[n-i] \]
+\[ Y^*[j] = 2^8 \cdot \sum_{i=0}^{6} h_i \cdot X[n-i] \]
+\[ Y[j] = \frac{1}{2^8} Y^*[j] = \sum_{i=0}^{6} h_i \cdot X[n-i] \]
 To get the unscaled output $Y[j]$, we simply have to shift back the output signal $Y^8[j]$ of 8-bits. This is why we scaled by a power of two: scaling back the output can be easily done on the FPGA with a costless signal crop.
 
 
@@ -395,17 +394,21 @@ In the project folder there are also 3 Jupyter notebooks, which we used to perfo
 
 \begin{figure}[H]
     \centering
+    \caption{}
+    \label{fig:demo_switch_general}
     \subfigure[Low-pass configuration. $h_k =  1, 8, 32, 48$. ]{
-    \label{fig:demo_switch_lowpass}
     \includegraphics[width=1.0\columnwidth]{demo_lowpass.pdf}}
+    \label{fig:demo_switch_lowpass}
+    
     
     \subfigure[High-pass configuration. $h_k = 1, -6, -25, 89$. ]{
-    \label{fig:demo_switch_highpass}
+    
     \includegraphics[width=1.0\columnwidth]{demo_highpass.pdf}}
+    \label{fig:demo_switch_highpass}
     \qquad
 \end{figure}
 
-Let us quickly show the results of a demo which we arranged on a Jupyter notebook (\texttt{7fir\_demo\_switch.ipynb}). The target of this demo is to prove the effectiveness of the re-programming feature in our implementation. In order to do so, we first setup the FPGA to be a low-pass filter with cut-off frequency of 30Hz. We feed to the FPGA a sample noisy waveform and retrieve the filtered waveform [Figure \ref{fig:demo_switch_lowpass}]. Then, we set new coefficients in the FPGA: this time to make the filter work as an high-pass filter with cut-off frequency of 30Hz. Finally, we feed the previous input noisy waveform and retrieve the output [Figure \ref{fig:demo_switch_highpass}]. Comparing the results, we can clearly see that the filter works as expected in both cases. The advantage of our implementation is that we can easily switch the coefficients run-time, without writing again the bitstream.
+Let us quickly show the results of a demo which we arranged on a Jupyter notebook (\texttt{7fir\_demo\_switch.ipynb}). The target of this demo is to prove the effectiveness of the re-programming feature in our implementation. In order to do so, we first setup the FPGA to be a low-pass filter with cut-off frequency of 30Hz. We feed to the FPGA a sample noisy waveform and retrieve the filtered waveform [Figure \ref{fig:demo_switch_lowpass}a]. Then, we set new coefficients in the FPGA: this time to make the filter work as an high-pass filter with cut-off frequency of 30Hz. Finally, we feed the previous input noisy waveform and retrieve the output [Figure \ref{fig:demo_switch_highpass}b]. Comparing the results, we can clearly see that the filter works as expected in both cases. The advantage of our implementation is that we can easily switch the coefficients run-time, without writing again the bitstream.
 
 
 
@@ -453,19 +456,11 @@ Let us quickly show the results of a demo which we arranged on a Jupyter noteboo
 
 % Bahador text here
 
-%Our last step is to try out our design with various input signals in order to see the quality of the filtering action.
-%We are using the following signals as inputs to our system:
-%After using our filter the result is:
-%And as a last comprobation we use a Python model of a filter to compare the results with the ones from our fir filter:
-
 In this last section we will discuss some results of the implemented FIR filter, applying it to different waveform samples.
 
 First, we simulate different carrier waveforms and add high frequency noise to them. We will consider three kinds of carrier waveforms, which are a 5 Hz sine wave, two gaussian pulses and electrocardiogram wave. In Figures \ref{fig:sample_general} we show the corresponding trend of each carrier waveform (black line), as well as the final noised waveform (green line).
 
-
-
-
-At this stage we have some artificially generated noised waveforms. The noised waveforms are given as an input to our FPGA FIR filter and the output is memorized by the computer client through the Python scripts introduced in §\ref{sec:frontend}. To provide a better comparison, we also performed a low-pass filtering through Python SciPy Signal library. This low-pass filter is internally implemented as an FIR filter, which has the same specifications as our FIR FPGA. If everything works fine, we expect that FPGA FIR matches with the equivalent Python FIR filtering.
+At this stage we have some artificially generated noised waveforms. The noised waveforms are given as an input to our FPGA FIR filter and the output is memorized by the computer client through the Python scripts introduced in §\ref{sec:frontend}. To provide a better comparison, we also performed a low-pass filtering through Scipy library. The Python low-pass filter is internally implemented as an FIR filter, which has the same specifications as our FIR FPGA. Therefore we expect that FPGA FIR output matches with the theoretically equivalent Python FIR filtering.
 
 
 
@@ -480,7 +475,7 @@ At this stage we have some artificially generated noised waveforms. The noised w
 %[results for Gaussian and ECG]%, if some cool points about these graphs were noticed, we should mention it otherwise the description is generally the same as the sine noise waveform.
 
 
-As we can see in Figures \ref{fig:real_general}, FPGA filtering works properly and matches the Python FIR filter. More importantly, the filtered waveform matches with the noiseless waveform sample. These results show that our FPGA FIR filter is capable of removing all the high-frequency noise and seems to be a successful low-pass filter.
+As we can see in Figures \ref{fig:real_general}, FPGA filtering works properly and matches the Python FIR filter. More importantly, the filtered waveform generally matches with the noiseless waveform sample. The only exception is the ECG waveform, since it has been soiled with gaussian random noise, which is hard to filter out using frequency thresholds. These results show that our FPGA FIR filter is capable of removing all the high-frequency noise and seems to be a successful low-pass filter.
 
 
 \subsection{A guitar experiment}
@@ -502,7 +497,7 @@ A \emph{bridge pickup} spans higher frequencies, while the neck pickup spans low
 In order to not get confused with musical expressions, we will refer to these concepts using another notation: we consider two modes for the pickup selector, the \emph{high-mode} and the \emph{low-mode}. The high-mode corresponds to a sharper sound (i.e. enhanced higher frequencies) and the low-mode to a deeper sound (i.e. enhanced lower frequencies). With a certain approximation, we can try to simulate this effects respectively with an high-pass and a low-pass filter.
 
 Using an electronic guitar and a smart amplifier, we recorded a specific note, the E (open string) (dominant frequency 329Hz), one time with the pickup in low-mode and another in high-mode. Furthermore, we repeated the process using multiple amplifiers setting. Each amplifier configuration leads to a unique timbre: although the played note is still the same, the amplifier produces a different timbre. Recorded signals are finally gathered in a sound bank, distinguishing between timbres. In our demo code, we can select a specific timbre from the sound bank:
-\texttt{ [Clean, Acoustic, Funk Wah, High Gain, Metallica] }
+\texttt{ [Clean, Acoustic, Funk Wah, High Gain, Metallica] }.
 
 
 For example, considering a “Clean” timbre, we plot a tiny slice of signal to see what’s going on.
