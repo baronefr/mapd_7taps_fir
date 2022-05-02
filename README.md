@@ -1,18 +1,20 @@
+
+<h5 align="center">Management and analysis of physical datasets (module A) project</h5>
+<h5 align="center">AY 2021/2022 University of Padua</h5>
+
 # **A 7-taps re-programmable Finite Impulse Response filter on FPGA**
-#### Management and analysis of physical datasets (mod. A) project
-#### AY 2021/2022 University of Padua
 
 **Abstract** FIR filters are simple, yet effective filters which can be implemented on an FPGA. They may function as low-pass, high-pass or band-stop filters, depending on how the internal coefficients are tweaked. In this report we focus on a 7-taps FIR filter design, which takes input waveforms from a serieal USB source managed by a Python client. By default our filter operates as a low-pass 30Hz filter, but we have added a feature which allows the user to change run-time the filter specifications without running a new implementation in Vivado, which is notoriously a time-consuming step. In this report we will discuss the filter design, with references to its VHDL implementation. We will show Vivado simulations of the filter, as well as outputs coming from the FPGA board implementation. The simulations agree with the actual behaviour on FPGA boards, proving the correctness and efficiency of the design. Finally, we will characterize the response of the filter using both simulated and real sound samples.
 
 ![fpga_programming](img/fpga_mode_programming.png)
 ![fpga_filter](img/fpga_mode_filter.png)
 
+
 ## TODO
 
 - [x] implementation
 - [x] report
 - [x] exam 4 feb 2022
-
 
 ## file structure
 
@@ -37,3 +39,13 @@
  + report.pdf                          The report of this project.
 
 ```
+
+***
+
+<h6 align="center">repository by Francesco Pio Barone</h6>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62724611/166108149-7629a341-bbca-4a3e-8195-67f469a0cc08.png" alt="" height="70"/>
+  &emsp;
+  <img src="https://user-images.githubusercontent.com/62724611/166108076-98afe0b7-802c-4970-a2d5-bbb997da759c.png" alt="" height="70"/>
+</p>
